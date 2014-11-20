@@ -87,7 +87,9 @@ function handle_input($user_input){
 
 function show_videos($parsed_videos){
     for($index = 0;$index -lt $parsed_videos.length;$index++){
-        Write-Host "[" $index "]" $parsed_videos[$index].title " - " $parsed_videos[$index].channel;
+        Write-Host "[" $index "] " -ForegroundColor Cyan -NoNewline;
+        Write-Host $parsed_videos[$index].title " | " -ForegroundColor Green -NoNewline;
+        Write-Host $parsed_videos[$index].channel;
     }
     Write-Host
 }

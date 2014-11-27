@@ -71,9 +71,8 @@ function select_video($parsed_videos){
     }
 }
 function get_input(){
-    #TODO error checking on input
-    $url = Read-Host "What do you want to listen to (<Ctrl C> to quit) ";
-    return $url;
+    $user_input = Read-Host "What do you want to listen to (<Ctrl C> to quit) ";
+    return $user_input;
 }
 
 function handle_input($user_input){

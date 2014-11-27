@@ -72,7 +72,7 @@ function select_video($parsed_videos){
 }
 function get_input(){
     #TODO error checking on input
-    $url = Read-Host "What do you want to listen to (<Ctrl C> to quit): ";
+    $url = Read-Host "What do you want to listen to (<Ctrl C> to quit) ";
     return $url;
 }
 
@@ -104,8 +104,7 @@ function get_video_url($parsed){
             $canStop = $true;
             set_state($Global:STATE_PENDING_QUERY);
         }
-        elseif(is_Numeric($num) -and $num -ge 0 -and $num -le 9){
-            
+        elseif(is_Numeric($num) -and ($num -ge 0) -and ($num -le 9)){
             $canStop = $true;
             $id = $parsed[$num].url;
         }

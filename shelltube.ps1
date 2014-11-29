@@ -1,5 +1,11 @@
 ﻿$Global:IE;
+$Global:ENTRY = "0";
+$Global:SEARCH = "1";
 
+$Global:search_commands = @{"number" = "video"; "<Enter>" = "search again"};
+$Global:entry_commands = @{"s" = "search"; "v" = "show/hide player"};
+
+$Global:all_commands = @{$Global:ENTRY = $Global:entry_commands; $Global:SEARCH = $Global:search_commands};
 #********
 # Common
 #********
@@ -7,6 +13,15 @@
 function init(){
     $Global:IE = New-Object -com internetexplorer.application;
     $Global:IE.visible = $true;
+}
+
+function toggle_visibility(){
+    if( $Global:IE.visible -eq $true ){
+        $Global:IE.visible = $false;
+    }
+    else{
+        $Global:IE.visible = $true;
+    }
 }
 
 function play_video($url){
@@ -43,6 +58,48 @@ function show_wait(){
 }
 
 #********
+# Commands
+#********
+
+function is_valid_input($my_input, $command_type) {
+    $commands = $Global:all_commands.Get_Item($command_type);
+    if( ($commands.ContainsKey([string]$my_input)) -eq $TRUE ) {
+        return $TRUE;
+    }
+    else{
+        return $FALSE;
+    }
+}
+
+function get_command_string([string]$command_type){
+    $commands = $Global:all_commands.Get_Item($command_type);
+    $command_string = "| ";
+    foreach ($h in $commands.GetEnumerator()) {
+        $command_string += $h.Name + " = " + $h.Value + " | ";
+    }
+    return "$command_string";
+}
+
+function get_input_with_command_type($command_type){
+    $command_string = get_command_string($command_type);
+
+    $input = "";  
+    $temp = 1;
+    while($temp -le 1){
+        $input = Read-Host $command_string;
+        if(is_valid_input $input $command_type -eq $true){
+            if( $input -eq "v" ){
+                toggle_visibility;
+            }
+            else{
+                $temp++;
+            }
+            
+        }
+    }
+    return $input;
+}
+#********
 # State
 #********
 
@@ -70,7 +127,7 @@ function select_video($parsed_videos){
         set_state($Global:STATE_PENDING_QUERY);
     }
 }
-function get_input(){
+function get_input_for_search(){
     $user_input = Read-Host "What do you want to listen to (<Ctrl C> to quit) ";
     return $user_input;
 }
@@ -98,7 +155,8 @@ function get_video_url($parsed){
     $num = "";
     $canStop = $false;
     while($canStop -ne $true){
-        $num = Read-Host "| number = video | <Enter> = search again | "
+        $num = Read-Host "| number = video | <Enter> = search again | ";
+
         if(!$num){
             $canStop = $true;
             set_state($Global:STATE_PENDING_QUERY);
@@ -115,7 +173,9 @@ function get_video_url($parsed){
 function process_commands(){
     while($true){
         clear_screen;
-        $user_input = get_input; 
+        get_input_with_command_type($Global:ENTRY);
+        clear_screen;
+        $user_input = get_input_for_search; 
         handle_input($user_input);
     }
 }

@@ -1,4 +1,8 @@
-﻿$Global:IE;
+﻿$host.ui.RawUI.WindowTitle = "ShellTube - YT PowerShell Player"
+[console]::WindowWidth=125;
+[console]::WindowHeight=15;
+[console]::BufferWidth=[console]::WindowWidth
+$Global:IE;
 $Global:ENTRY = "0";
 $Global:SEARCH = "1";
 
@@ -35,6 +39,7 @@ function get_request([string]$query){
     show_wait;
 
     $client = New-Object System.Net.WebClient
+    $client.Encoding = [System.Text.Encoding]::UTF8
     $string = $client.DownloadString($query);
     
     return $string;
@@ -230,3 +235,4 @@ process_commands;
 finally{
     $Global:IE.Quit();
 }
+Read-Host -Prompt “Press Enter to exit”
